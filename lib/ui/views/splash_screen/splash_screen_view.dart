@@ -1,3 +1,4 @@
+import 'package:dotlottie_loader/dotlottie_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:flutter_templat/ui/shared/colors.dart';
 import 'package:flutter_templat/ui/shared/utlis.dart';
 import 'package:flutter_templat/ui/views/splash_screen/splash_screen_controller.dart';
+import 'package:lottie/lottie.dart';
 
 class SplashScreenView extends StatefulWidget {
   const SplashScreenView({super.key});
@@ -39,23 +41,19 @@ class _SplashScreenViewState extends State<SplashScreenView> {
     //mycontext = context;
     return SafeArea(
         child: Scaffold(
-      body: Stack(
-        alignment: AlignmentDirectional.bottomCenter,
-        fit: StackFit.passthrough,
+      body: Column(
+   mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            child: SvgPicture.asset(
-              'assets/images/bg_background.svg',
-              width: screenWidth(1),
-              height: screenHeight(1),
-            ),
-          ),
-
-          Center(
-            child: Container(
-              child: SvgPicture.asset('assets/images/Logo.svg'),
-            ),
-          ),
+           Center(
+             child: Image.asset(
+               'assets/images/animationgif.gif',
+               width: 200,
+               height: 200,
+               fit: BoxFit.contain,
+             ),
+           )
+        ],
+      ),
           // Align(
           //   alignment: Alignment.bottomCenter,
           // child: Container(
@@ -68,13 +66,9 @@ class _SplashScreenViewState extends State<SplashScreenView> {
           // ),
 
           // )
-          Container(
-            margin: EdgeInsets.only(bottom: size.width * 0.50),
-            height: size.width * 0.1,
-            child: SpinKitThreeBounce(color: AppColors.mainorangecolor),
-          )
-        ],
+       
+        
       ),
-    ));
+    );
   }
 }

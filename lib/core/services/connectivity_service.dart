@@ -10,7 +10,7 @@ class ConnectivityService {
     Connectivity connectivity = Connectivity();
 
     connectivity.onConnectivityChanged.listen((event) {
-      connectivityStatusController.add(getStauts(event));
+      connectivityStatusController.add(getStauts(event as ConnectivityResult));
     });
   }
   ConnectivityStatus getStauts(ConnectivityResult value) {
