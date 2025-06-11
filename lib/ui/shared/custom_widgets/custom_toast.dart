@@ -19,7 +19,7 @@ class CustomToast {
         break;
       case MessagType.WARNING:
         imageName = 'warning';
-        shadowColor = AppColors.mainorangecolor;
+        shadowColor = AppColors.orangColor;
         break;
       case MessagType.REJECTED:
         imageName = 'rejected-01';
