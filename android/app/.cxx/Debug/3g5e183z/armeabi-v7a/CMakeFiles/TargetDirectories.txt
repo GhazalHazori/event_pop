@@ -1,0 +1,2 @@
+E:/projectforfifthyear/event_pop/android/app/.cxx/Debug/3g5e183z/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/projectforfifthyear/event_pop/android/app/.cxx/Debug/3g5e183z/armeabi-v7a/CMakeFiles/rebuild_cache.dir
