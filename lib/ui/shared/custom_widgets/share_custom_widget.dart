@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ShareBottomSheet extends StatelessWidget {
   final String shareText;
@@ -55,28 +55,32 @@ class ShareBottomSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.link,
+                  // icon: FontAwesomeIcons.link,
+                  icon: Icons.abc,
                   label: 'Copy Link',
                   color: Colors.grey[600]!,
                   backgroundColor: Colors.grey[100]!,
                   onTap: () => _copyToClipboard(context),
                 ),
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.whatsapp,
+                  // icon: FontAwesomeIcons.whatsapp,
+                  icon: Icons.abc,
                   label: 'WhatsApp',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF25D366),
                   onTap: () => _shareToWhatsApp(),
                 ),
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.facebookF,
+                  // icon: FontAwesomeIcons.facebookF,
+                  icon: Icons.abc,
                   label: 'Facebook',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF1877F2),
                   onTap: () => _shareToFacebook(),
                 ),
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.facebookMessenger,
+                  // icon: FontAwesomeIcons.facebookMessenger,
+                  icon: Icons.abc,
                   label: 'Messenger',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF0084FF),
@@ -94,28 +98,32 @@ class ShareBottomSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.xTwitter,
+                  // icon: FontAwesomeIcons.xTwitter,
+                  icon: Icons.abc,
                   label: 'Twitter',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF000000),
                   onTap: () => _shareToTwitter(),
                 ),
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.instagram,
+                  // icon: FontAwesomeIcons.instagram,
+                  icon: Icons.abc,
                   label: 'Instagram',
                   color: Colors.white,
                   backgroundColor: const Color(0xFFE4405F),
                   onTap: () => _shareToInstagram(),
                 ),
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.skype,
+                  // icon: FontAwesomeIcons.skype,
+                  icon: Icons.abc,
                   label: 'Skype',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF00AFF0),
                   onTap: () => _shareToSkype(),
                 ),
                 buildSocialIcon(
-                  icon: FontAwesomeIcons.sms,
+                  // icon: FontAwesomeIcons.sms,
+                  icon: Icons.abc,
                   label: 'Message',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF34C759),

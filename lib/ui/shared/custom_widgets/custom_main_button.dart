@@ -17,7 +17,6 @@ class CustomMainButton extends StatelessWidget {
   final String? svgname;
   final double width;
   final double hight;
-  
 
   //final String? svgname;
   const CustomMainButton({
@@ -29,7 +28,9 @@ class CustomMainButton extends StatelessWidget {
     this.backgroundcolor,
     required this.onpressed,
     this.svgname,
-    this.bordercolor, required this.width, required this.hight,
+    this.bordercolor,
+    required this.width,
+    required this.hight,
   });
 
   @override
@@ -40,30 +41,32 @@ class CustomMainButton extends StatelessWidget {
         onpressed();
       },
       child: Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween, // توزيع العناصر على الجوانب
-  children: [
-    Expanded( // يسمح للنص بالبقاء في المنتصف
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textcolor ?? AppColors.whitecolor,
-            fontSize: screenWidth(25),
-            fontWeight: textfontwieght ?? FontWeight.normal,
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // توزيع العناصر على الجوانب
+        children: [
+          Expanded(
+            // يسمح للنص بالبقاء في المنتصف
+            child: Center(
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: textcolor ?? AppColors.whitecolor,
+                  fontSize: screenWidth(25),
+                  fontWeight: textfontwieght ?? FontWeight.normal,
+                ),
+              ),
+            ),
           ),
-        ),
+          if (svgname != null) ...[
+            SvgPicture.asset(
+              'assets/images/$svgname.svg',
+              width: screenWidth(40),
+              height: screenHeight(40),
+            ),
+          ],
+        ],
       ),
-    ),
-    if (svgname != null) ...[
-      SvgPicture.asset(
-        'assets/images/$svgname.svg',
-        width: screenWidth(40),
-        height: screenHeight(40),
-      ),
-    ],
-  ],
-),
 
       // Text(
       //   text,
@@ -72,14 +75,14 @@ class CustomMainButton extends StatelessWidget {
       //       fontSize: textsize ?? size.width * 0.55,
       //       fontWeight: textfontwieght ?? FontWeight.normal),
       // )
-      
+
       style: ElevatedButton.styleFrom(
         side: bordercolor != null
             ? BorderSide(width: 1, color: bordercolor!) //appcolors.whitcolor
             : null,
         backgroundColor: backgroundcolor,
         fixedSize: Size(width, hight),
-        shape:RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10)),
+        // shape:RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10)),
       ),
     );
   }
