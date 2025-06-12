@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -55,32 +56,28 @@ class ShareBottomSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.link,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.link,
                   label: 'Copy Link',
                   color: Colors.grey[600]!,
                   backgroundColor: Colors.grey[100]!,
                   onTap: () => _copyToClipboard(context),
                 ),
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.whatsapp,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.whatsapp,
                   label: 'WhatsApp',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF25D366),
                   onTap: () => _shareToWhatsApp(),
                 ),
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.facebookF,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.facebookF,
                   label: 'Facebook',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF1877F2),
                   onTap: () => _shareToFacebook(),
                 ),
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.facebookMessenger,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.facebookMessenger,
                   label: 'Messenger',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF0084FF),
@@ -98,32 +95,28 @@ class ShareBottomSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.xTwitter,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.xTwitter,
                   label: 'Twitter',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF000000),
                   onTap: () => _shareToTwitter(),
                 ),
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.instagram,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.instagram,
                   label: 'Instagram',
                   color: Colors.white,
                   backgroundColor: const Color(0xFFE4405F),
                   onTap: () => _shareToInstagram(),
                 ),
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.skype,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.skype,
                   label: 'Skype',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF00AFF0),
                   onTap: () => _shareToSkype(),
                 ),
                 buildSocialIcon(
-                  // icon: FontAwesomeIcons.sms,
-                  icon: Icons.abc,
+                  icon: FontAwesomeIcons.sms,
                   label: 'Message',
                   color: Colors.white,
                   backgroundColor: const Color(0xFF34C759),
