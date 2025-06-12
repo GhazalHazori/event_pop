@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:flutter_templat/ui/shared/colors.dart';
 import 'package:flutter_templat/ui/shared/utlis.dart';
 import 'package:flutter_templat/ui/views/splash_screen/splash_screen_controller.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreenView extends StatefulWidget {
@@ -45,12 +46,7 @@ class _SplashScreenViewState extends State<SplashScreenView> {
    mainAxisAlignment: MainAxisAlignment.center,
         children: [
            Center(
-             child: Image.asset(
-               'assets/images/animationgif.gif',
-               width: 200,
-               height: 200,
-               fit: BoxFit.contain,
-             ),
+             child: GifView.asset('assets/images/Animation.gif')
            )
         ],
       ),

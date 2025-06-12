@@ -1,34 +1,29 @@
+
+
+//ملف الاعدادادتى لكامل ال api
 import 'package:flutter_templat/core/enums/request_type.dart';
 import 'package:flutter_templat/core/utils/general_utile.dart';
-import 'package:flutter_templat/ui/shared/utlis.dart';
 
 class NetworkConfig {
-  static String BASE_API = 'api/web/';
-  static String getFullApiUrl(String api) {
-    return BASE_API + api;
+static String BASE_API = '/api/';
+  static String getFullApiRoute(String apiroute) {
+    return BASE_API + apiroute;
   }
 
-  static Map<String, String> getHeaders(
-      {bool? needAuth = true,
-      RequestType? type = RequestType.POST,
-      Map<String, String>? extraHeaders = const {}}) {
+
+
+  static Map<String, String>? getHeaders(
+      {bool needAuth = true,
+      RequestType? type,
+      Map<String, String>? extraHeaders}) {
     return {
-      'Accept-Language': storage.getAppLangauge(),
-      if (needAuth!)
-        'Authorization': 'Bearer ${storage.getTokenInfo()?.accessToken ?? ''}',
-      if (type == RequestType.POST) 'Content-Type': 'application/json',
-      ...extraHeaders!
+      if (needAuth)
+        "Authorization": "Barrier ${storage.getTokenInfo()?.accessToken ?? ''}",
+      if (type != RequestType.GET)
+        "Content-Type": type == RequestType.MULTIPART
+            ? "multipart/form-data"
+            : "application/json",
+      ...extraHeaders ?? {}
     };
   }
-  //     {bool? needAuth = true,
-  //     RequestType? type = RequestType.POST,
-  //     Map<String, String>? extraHeaders = const {}}) {
-  //   return {
-  //     if (needAuth!)
-  //       'Authorization':
-  //           'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiQ3VzdG9tZXIiLCJuYW1lIjoiMiIsIm5iZiI6MTY4NDA4MTQ5NCwiZXhwIjoxNjg0NTk5ODk0LCJpYXQiOjE2ODQwODE0OTR9.VRHLAc7hRMm5NVU32sMWIP3HqhTdYHGlKSnkTsdqEcY',
-  //     if (type == RequestType.POST) 'Content-Type': 'application/json',
-  //     ...extraHeaders!
-  //   };
-  // }
 }

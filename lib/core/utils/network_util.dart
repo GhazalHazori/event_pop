@@ -116,7 +116,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:flutter_templat/core/enums/request_type.dart';
 
 class NetworkUtil {
-  static String baseUrl = 'training.owner-tech.com';
+  static String baseUrl = 'graduate-kgh0.onrender.com';
   static var client = http.Client();
 
   static Future<dynamic> sendRequest({

@@ -8,7 +8,7 @@ import 'package:flutter_templat/ui/shared/utlis.dart';
 class CustomToast {
   static showMessage({
     required String message,
-    MessagType messagetype = MessagType.INFO,
+    MessagType messagetype = MessagType.INFO, required messageType,
   }) {
     String imageName = 'info';
     Color shadowColor = AppColors.bluecolor;
@@ -19,7 +19,7 @@ class CustomToast {
         break;
       case MessagType.WARNING:
         imageName = 'warning';
-        shadowColor = AppColors.mainorangecolor;
+        shadowColor = AppColors.orangColor;
         break;
       case MessagType.REJECTED:
         imageName = 'rejected-01';

@@ -1,4 +1,6 @@
 import 'package:flutter_templat/core/utils/general_utile.dart';
+import 'package:flutter_templat/ui/views/intro_view/intro_view.dart';
+import 'package:flutter_templat/ui/views/main_view/main_view.dart';
 import 'package:get/get.dart';
 import 'package:flutter_templat/core/enums/message_type.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_toast.dart';
@@ -11,10 +13,11 @@ class SplashScreenController extends GetxController {
       cartService.clearCart();
       storage.setOrderPlaced(false);
     }
-    Future.delayed(Duration(seconds: 5)).then((value) {
-      if (storage.getFirstLunch()) {
-        // Get.off(IntroView);
+    Future.delayed(Duration(seconds: 10)).then((value) {
+      if (storage.getTokenInfo()?.accessToken != '') {
+        Get.off(MainView());
       } else {
+          Get.off(IntroView());
         // return SharedPrefrenceRepository.getLogeedIn()
         //     ? Get.off(MainView)
         // :

@@ -78,6 +78,7 @@
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_templat/firebase_options.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter_templat/app/my_app.dart';
@@ -86,7 +87,7 @@ import 'package:flutter_templat/core/services/cart_service.dart';
 import 'package:flutter_templat/core/services/connectivity_service.dart';
 import 'package:flutter_templat/core/services/location_services.dart';
 import 'package:flutter_templat/core/services/notification_service.dart';
-import 'package:flutter_templat/firebase_options.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/data/repositories/shared_preference_repository.dart';

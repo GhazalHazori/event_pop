@@ -57,7 +57,7 @@ Widget drawerItem(
         ),
         Text(
           text,
-          style: TextStyle(color: AppColors.mainorangecolor),
+          style: TextStyle(color: AppColors.orangColor),
         )
       ],
     ),
