@@ -6,6 +6,7 @@ class AppColors {
   static Color greencolor = Color.fromRGBO(41, 214, 151, 1);
   static Color pupelsColor = Color.fromRGBO(125, 103, 238, 1);
   static Color skyColor = Color.fromRGBO(57, 209, 242, 1);
+  static Color skyopcityColor = Color.fromRGBO(170, 194, 236, 0.027);
   static Color blacktext = Colors.black;
   static Color greycolor = Color.fromARGB(255, 104, 98, 98);
   static Color whitecolor = Colors.white;
