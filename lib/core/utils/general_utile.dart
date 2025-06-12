@@ -28,7 +28,7 @@ void checkConnection(Function function) {
   } else {
     CustomToast.showMessage(
       message: 'Please check internet connection',
-      messagetype: MessagType.WARNING,
+      messageType: MessagType.WARNING,
     );
   }
 }

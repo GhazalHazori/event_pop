@@ -32,5 +32,5 @@ class CommonResponse<T> {
     }
   }
 
-  bool get getStatus => statusCode == 200 ? true : false;
+   bool get getStatus => statusCode.toString().startsWith('2');
 }
