@@ -40,31 +40,30 @@ class _SplashScreenViewState extends State<SplashScreenView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     //mycontext = context;
-    return SafeArea(
-        child: Scaffold(
-      body: Column(
-   mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-           Center(
-             child: GifView.asset('assets/images/Animation.gif')
-           )
-        ],
-      ),
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          // child: Container(
-          //   margin: EdgeInsets.only(bottom: size.width * 0.40),
-          //   width: size.width * 0.1,
-          //   height: size.width * 0.1,
-          //   child: CircularProgressIndicator(
-          //     color: AppColors.mainorangecolor,
-          //   ),
-          // ),
-
-          // )
-       
-        
-      ),
-    );
+    return Scaffold(
+          body: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+       Center(
+         child: GifView.asset('assets/images/Animation.gif',filterQuality: FilterQuality.high, width: 300,
+        height: 300,)
+       )
+    ],
+          ),
+      // Align(
+      //   alignment: Alignment.bottomCenter,
+      // child: Container(
+      //   margin: EdgeInsets.only(bottom: size.width * 0.40),
+      //   width: size.width * 0.1,
+      //   height: size.width * 0.1,
+      //   child: CircularProgressIndicator(
+      //     color: AppColors.mainorangecolor,
+      //   ),
+      // ),
+    
+      // )
+           
+    
+          );
   }
 }

@@ -45,12 +45,14 @@ import 'package:flutter_templat/core/data/models/common_response.dart';
 import 'package:flutter_templat/core/data/network/endpoints/user_endpoints.dart';
 import 'package:flutter_templat/core/data/network/network_config.dart';
 import 'package:flutter_templat/core/enums/request_type.dart';
+import 'package:flutter_templat/core/utils/general_utile.dart';
 import 'package:flutter_templat/core/utils/network_util.dart';
 
 class UserRepository {
   Future<Either<String, TokenInfo>> login({
     required String email,
     required String password,
+    required String fcmToken
   }) async {
     try {
       return NetworkUtil.sendRequest(
@@ -59,6 +61,7 @@ class UserRepository {
         body: {
           'email': email,
           'password': password,
+          'fcmToken':fcmToken
         },
         headers: NetworkConfig.getHeaders(needAuth: false),
       ).then((response) {

@@ -19,9 +19,12 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
   @override
   Widget build(BuildContext context) {
     ChangePasswordViewController controller=Get.put(ChangePasswordViewController());
-    return  SafeArea(child: Scaffold(body: Column(children: [  SizedBox(width: screenWidth(1.11),child: SvgPicture.asset("assets/images/back.svg")),screenHeight(40).ph,
+    return  Scaffold(body: Column(children: [   screenHeight(20).ph,
+        Align(alignment: AlignmentDirectional.topStart,
+          child: SizedBox(   width: screenWidth(6),child: SvgPicture.asset("assets/images/back.svg",))),
+        screenHeight(40).ph,
       SizedBox(width: screenWidth(1.11),
-        child: Text("Resset Password",style: TextStyle(color: AppColors.blacktext,fontSize: screenWidth(20),fontWeight: FontWeight.bold))),
+        child: Text("Resset Password",style: TextStyle(color: AppColors.blacktext,fontSize: screenWidth(15),fontWeight: FontWeight.w400))),
         screenHeight(90).ph,
           SizedBox(width: screenWidth(1.11),
         child: Text("Enter your new password ",style: TextStyle(color: AppColors.blacktext,fontSize: screenWidth(20),))),
@@ -32,11 +35,11 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
         hinttext: "confirm password", textfieldhintcolor: AppColors.secondryWhite, texteditingcontroller: controller.password,prefixIcon: Icon(Icons.lock_outline,color: AppColors.secondryWhite,),),
       screenHeight(20).ph,
        CustomMainButton(text: "RESET", onpressed: (){
-
-      },svgname: "circle_arrow",backgroundcolor: AppColors.bluecolor, width: 0, hight: 0,),
+    
+      },svgname: "circle_arrow",backgroundcolor: AppColors.bluecolor, width: screenWidth(2), hight: screenHeight(13),),
       screenHeight(20).ph,
         ],
         ),
-        ),);
+        );
   }
 }

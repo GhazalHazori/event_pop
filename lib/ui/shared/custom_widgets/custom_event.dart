@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_templat/main.dart';
@@ -44,7 +45,9 @@ class _CustomEventState extends State<CustomEvent>
           Center(
             child: ClipRRect(
               child: Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
-              child: SvgPicture.asset("assets/images/${widget.imagename}.svg",fit: BoxFit.none,)),),
+              child:SvgPicture.asset("assets/images/${widget.imagename}.svg",fit: BoxFit.none,)
+              //  CachedNetworkImage(imageUrl: widget.imagename,fit: BoxFit.none,)
+              ),),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

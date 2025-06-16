@@ -13,11 +13,12 @@ class SplashScreenController extends GetxController {
       cartService.clearCart();
       storage.setOrderPlaced(false);
     }
-    Future.delayed(Duration(seconds: 10)).then((value) {
-      if (storage.getTokenInfo()?.accessToken != '') {
+    Future.delayed(Duration(seconds: 7)).then((value) {
+      if (storage.getTokenInfo()!.accessToken != null) {
         Get.off(MainView());
       } else {
           Get.off(IntroView());
+          print(storage.getTokenInfo()!.accessToken);
         // return SharedPrefrenceRepository.getLogeedIn()
         //     ? Get.off(MainView)
         // :

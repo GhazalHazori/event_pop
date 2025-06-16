@@ -1,6 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_templat/core/utils/general_utile.dart';
+import 'package:flutter_templat/ui/views/main_view/explore_view/explore_view.dart';
+import 'package:flutter_templat/ui/views/main_view/main_view.dart';
+import 'package:flutter_templat/ui/views/reset_password_view/reset_password_view.dart';
 import 'package:flutter_templat/ui/views/siggn.dart';
 import 'package:flutter_templat/ui/views/sign_in_view/sign_in_view.dart';
 import 'package:flutter_templat/ui/views/verfication_view/verfication_view.dart';
