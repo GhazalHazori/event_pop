@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_templat/core/utils/general_utile.dart';
 import 'package:flutter_templat/main.dart';
 import 'package:flutter_templat/ui/shared/colors.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_main_button.dart';
@@ -21,7 +22,8 @@ class _SignInViewState extends State<SignInView> {
   Widget build(BuildContext context) {
     SignInController controller=Get.put(SignInController());
      bool isButtonEnabled = true; 
-    return  SafeArea(child: Scaffold(body: Column(children: [screenHeight(30).ph,
+    return  SafeArea(child: Scaffold(resizeToAvoidBottomInset: false,
+      body: Column(children: [screenHeight(30).ph,
       SvgPicture.asset("assets/images/signin_event.svg"),screenHeight(40).ph,
       SizedBox(width: screenWidth(1.11),
         child: Text("Sign in",style: TextStyle(color: AppColors.blacktext,fontSize: screenWidth(20),fontWeight: FontWeight.w500))),
@@ -50,7 +52,7 @@ class _SignInViewState extends State<SignInView> {
       ),
       screenHeight(20).ph,
       CustomMainButton(text: "Sign In", onpressed: (){
-controller.login(email: controller.emailController.text, password: controller.password.text);
+controller.login(email: controller.emailController.text, password: controller.password.text,fcmToken: storage.getFcmToken(),);
       },svgname: "circle_arrow",backgroundcolor: AppColors.bluecolor, width: screenWidth(1.11), hight: screenHeight(15),),
       screenHeight(20).ph,
       Text("OR",style: TextStyle(fontSize: screenWidth(20),color: AppColors.greySign),),screenHeight(20).ph,
@@ -69,4 +71,5 @@ controller.login(email: controller.emailController.text, password: controller.pa
       )
     ],),),);
   }
+  
 }

@@ -33,4 +33,5 @@ class CommonResponse<T> {
   }
 
    bool get getStatus => statusCode.toString().startsWith('2');
+     T get getData => data!;
 }

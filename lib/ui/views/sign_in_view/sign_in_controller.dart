@@ -12,13 +12,13 @@ class SignInController  extends BaseControoler{
   TextEditingController emailController=TextEditingController();
   TextEditingController password =TextEditingController();
   
-  void login({required String email,required String password}) {
+  void login({required String email,required String password,required String fcmToken}) {
     runFullLoadingFunction(
       function: UserRepository()
           .login(
           
             email: email,
-            password: password,
+            password: password, fcmToken: fcmToken
           )
           .then(
             (value) => value.fold(
@@ -34,6 +34,7 @@ class SignInController  extends BaseControoler{
                   message: "Succed",
                 );
                 storage.setTokenInfo(r);
+                print(   storage.setTokenInfo(r));
                 Get.to(MainView());
               },
             ),

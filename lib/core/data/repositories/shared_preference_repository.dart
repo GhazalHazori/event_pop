@@ -17,7 +17,7 @@ class SharedPrefrenceRepository {
   String PREF_CART_LIST = 'cart_list';
   String PREF_ORDER_PLACED = 'order_placed';
   String PREF_SUB_STATUS = 'sub_status';
-
+String FCM_TOKEN = 'fcm_token';
   setFirstLunch(bool value) {
     setPreferance(dataType: DataType.BOOL, key: PREF_FIRST_LUNCH, value: value);
   }
@@ -58,6 +58,16 @@ class SharedPrefrenceRepository {
       return getpreferance(key: PREF_APP_LANG);
     } else
       return 'tr';
+  }
+  setFcmToken(String value) {
+    setPreferance(dataType: DataType.STRING, key: FCM_TOKEN, value: value);
+  }
+
+  String getFcmToken() {
+    if (globalSharedPrefs.containsKey(FCM_TOKEN)) {
+      return getpreferance(key: FCM_TOKEN);
+    } else
+      return '';
   }
 
   bool getFirstLunch() {

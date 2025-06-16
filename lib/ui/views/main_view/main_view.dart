@@ -11,6 +11,7 @@ import 'package:flutter_templat/ui/shared/colors.dart';
 
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_drawer.dart';
 import 'package:flutter_templat/ui/shared/utlis.dart';
+import 'package:flutter_templat/ui/views/main_view/events_view/events_view.dart';
 import 'package:flutter_templat/ui/views/main_view/explore_view/explore_view.dart';
 import 'package:flutter_templat/ui/views/main_view/main_view_widget/bottom_navigation_widget.dart' show BottomNavigationWidget;
 
@@ -25,7 +26,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  PageController controller = PageController(initialPage: 3);
+  PageController controller = PageController(initialPage: 0);
   BottomNavigationEnum selected = BottomNavigationEnum.EXPLOR
   ;
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
@@ -125,15 +126,21 @@ radius: screenWidth(14),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         key: key,
         bottomNavigationBar:  BottomNavigationWidget(
-                navitm: selected,
+                 navitm: selected,
                 ontap: (select, pagenumber) {
+           controller.jumpToPage(pagenumber);
+
+          setState(() {
+            selected = select;
+          });   
                 }
               ),
         body: PageView(
           physics: NeverScrollableScrollPhysics(),
           controller: controller,
           children: [
-        ExploreView()
+        ExploreView(),
+        EventsView()
           ],
         ),
       ),

@@ -18,12 +18,12 @@ static String BASE_API = '/api/';
       Map<String, String>? extraHeaders}) {
     return {
       if (needAuth)
-        "Authorization": "Barrier ${storage.getTokenInfo()?.accessToken ?? ''}",
+        "Authorization":" b ${storage.getTokenInfo()!.accessToken ?? ''}",
       if (type != RequestType.GET)
         "Content-Type": type == RequestType.MULTIPART
             ? "multipart/form-data"
             : "application/json",
-      ...extraHeaders ?? {}
+      ...extraHeaders ?? {} 
     };
   }
 }

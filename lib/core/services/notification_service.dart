@@ -53,8 +53,9 @@ class NotificationService {
   Future<void> registerdFCMToken() async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     //! -- Call api that register fcm token ---
+      storage.setFcmToken(fcmToken ?? "");
     print(fcmToken);
-
+     
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       //! -- Call api that register fcm token ---
       // TODO: If necessary send token to application server.
