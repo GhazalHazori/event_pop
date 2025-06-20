@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 
 SharedPrefrenceRepository get storage => Get.find<SharedPrefrenceRepository>();
 CartService get cartService => Get.find<CartService>();
-LocationService get locationService => Get.find<LocationService>();
 ConnectivityService get connectivityService => Get.find<ConnectivityService>();
 NotificationService get notificationService => Get.find<NotificationService>();
 bool get isOnline =>

@@ -1,59 +1,134 @@
-import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:flutter_templat/ui/shared/utlis.dart';
-import 'package:geocoding/geocoding.dart ' as geo;
 
-class LocationService {
-  Location location = new Location();
-  Future<LocationData?> getCurrentLocation({bool? hideLoader = true}) async {
-    LocationData _locationData;
-    if (!await isLocationEnabled()) return null;
-    if (!await isPermissionGranted()) return null;
-    customLoader();
+class MapPickerScreen extends StatefulWidget {
+  @override
+  _MapPickerScreenState createState() => _MapPickerScreenState();
+}
 
-    _locationData = await location.getLocation();
+class _MapPickerScreenState extends State<MapPickerScreen> {
+  GoogleMapController? _mapController;
+  LatLng _initialPosition = LatLng(35.0, 38.5); // مركز سوريا
+  LatLng? _selectedLocation;
+  bool _locationEnabled = false;
 
-    if (hideLoader!) BotToast.closeAllLoading();
-    return _locationData;
+  final Location _locationService = Location();
+
+  final List<Map<String, dynamic>> syrianGovernorates = [
+    {'name': 'دمشق', 'lat': 33.5138, 'lng': 36.2765},
+    {'name': 'حلب', 'lat': 36.2021, 'lng': 37.1343},
+    {'name': 'حمص', 'lat': 34.7324, 'lng': 36.7138},
+    {'name': 'حماة', 'lat': 35.1318, 'lng': 36.7578},
+    {'name': 'اللاذقية', 'lat': 35.5306, 'lng': 35.7915},
+    {'name': 'طرطوس', 'lat': 34.8890, 'lng': 35.8866},
+    {'name': 'إدلب', 'lat': 35.9306, 'lng': 36.6339},
+    {'name': 'دير الزور', 'lat': 35.3361, 'lng': 40.1408},
+    {'name': 'الرقة', 'lat': 35.9500, 'lng': 39.0083},
+    {'name': 'الحسكة', 'lat': 36.4900, 'lng': 40.7500},
+    {'name': 'درعا', 'lat': 32.6189, 'lng': 36.1026},
+    {'name': 'السويداء', 'lat': 32.7090, 'lng': 36.5684},
+    {'name': 'القنيطرة', 'lat': 33.1250, 'lng': 35.8208},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocation();
   }
 
-  Future<geo.Placemark?> getLocationInfo(LocationData locationData,
-      {bool? showLoader = true}) async {
-    if (showLoader!) customLoader();
-    List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
-        locationData.latitude ?? 0.0, locationData.longitude ?? 0.0);
-    BotToast.closeAllLoading();
-    if (placemarks.isNotEmpty)
-      return placemarks[0];
-    else
-      return null;
-  }
+  Future<void> _initLocation() async {
+    bool serviceEnabled = await _locationService.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await _locationService.requestService();
+    }
 
-  Future<geo.Placemark?> getCurrentLocationInfo() async {
-    return await getLocationInfo(
-        await getCurrentLocation() ?? LocationData.fromMap({}));
-  }
+    PermissionStatus permissionGranted = await _locationService.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await _locationService.requestPermission();
+    }
 
-  Future<bool> isLocationEnabled() async {
-    bool _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
+    if (permissionGranted == PermissionStatus.granted) {
+      final userLocation = await _locationService.getLocation();
+      setState(() {
+        _locationEnabled = true;
+        _initialPosition = LatLng(
+          userLocation.latitude!,
+          userLocation.longitude!,
+        );
+      });
 
-      if (!_serviceEnabled) {
-        return false;
+      // ✅ حرك الكاميرا إن تم تهيئة الخريطة
+      if (_mapController != null) {
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(_initialPosition, 12),
+        );
       }
     }
-    return _serviceEnabled;
   }
 
-  Future<bool> isPermissionGranted() async {
-    PermissionStatus _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return false;
-      }
+  Set<Marker> _getMarkers() {
+    Set<Marker> markers = syrianGovernorates.map((gov) {
+      return Marker(
+        markerId: MarkerId(gov['name']),
+        position: LatLng(gov['lat'], gov['lng']),
+        infoWindow: InfoWindow(title: gov['name']),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      );
+    }).toSet();
+
+    if (_selectedLocation != null) {
+      markers.add(
+        Marker(
+          markerId: MarkerId("selected"),
+          position: _selectedLocation!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          infoWindow: InfoWindow(title: "الموقع المحدد"),
+        ),
+      );
     }
-    return _permissionGranted == PermissionStatus.granted;
+
+    return markers;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("اختر الموقع")),
+      body: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: _initialPosition,
+          zoom: 6.5,
+        ),
+        onMapCreated: (controller) {
+          _mapController = controller;
+
+          if (_locationEnabled) {
+            _mapController!.animateCamera(
+              CameraUpdate.newLatLngZoom(_initialPosition, 12),
+            );
+          }
+        },
+        onTap: (latLng) {
+          setState(() => _selectedLocation = latLng);
+        },
+        myLocationEnabled: _locationEnabled,
+        myLocationButtonEnabled: true,
+        markers: _getMarkers(),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          if (_selectedLocation != null) {
+            Navigator.pop(context, _selectedLocation);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("يرجى اختيار موقع أولاً")),
+            );
+          }
+        },
+        label: Text("تأكيد"),
+        icon: Icon(Icons.check),
+      ),
+    );
   }
 }
