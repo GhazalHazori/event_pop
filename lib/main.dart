@@ -25,19 +25,19 @@ Future<void> main() async {
 
   Get.put(SharedPrefrenceRepository());
   Get.put(CartService());
-  Get.put(LocationService());
+
   Get.put(ConnectivityService());
   Get.put(MyAppContoller());
 
-  // try {
-  //   await Firebase.initializeApp(
-  //     // options: DefaultFirebaseOptions.currentPlatform,
-  //   );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  //   Get.put(NotificationService());
-  // } catch (e) {
-  //   print(e);
-  // }
+    Get.put(NotificationService());
+  } catch (e) {
+    print(e);
+  }
 
   runApp(const MyApp());
 }

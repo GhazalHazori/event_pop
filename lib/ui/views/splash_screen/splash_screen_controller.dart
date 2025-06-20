@@ -14,10 +14,10 @@ class SplashScreenController extends GetxController {
       storage.setOrderPlaced(false);
     }
     Future.delayed(Duration(seconds: 10)).then((value) {
-      if (storage.getTokenInfo()?.accessToken != '') {
+      if (storage.getTokenInfo()?.accessToken != null) {
         Get.off(MainView());
       } else {
-          Get.off(IntroView());
+        Get.off(IntroView());
         // return SharedPrefrenceRepository.getLogeedIn()
         //     ? Get.off(MainView)
         // :

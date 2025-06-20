@@ -59,6 +59,8 @@ class UserRepository {
         body: {
           'email': email,
           'password': password,
+          'fcmToken':
+              "eBmof8GKQGKupwi1SFzUCx:APA91bEU9spNVMO2W93Vo5ps8RZADuyJf5VJu-y2sZyeEEA5i5YX-8lHe6fzMMzgWIuC54kj6lAo6PE3AYslTFcTBsLlGnVsW6c7qB5kAbIePMJ2a1LQBEA"
         },
         headers: NetworkConfig.getHeaders(needAuth: false),
       ).then((response) {
@@ -75,7 +77,8 @@ class UserRepository {
       return Left(e.toString());
     }
   }
-    Future<Either<String, String>> verify({
+
+  Future<Either<String, String>> verify({
     required String email,
     required String otpNum,
   }) async {
@@ -102,8 +105,6 @@ class UserRepository {
       return Left(e.toString());
     }
   }
-  
-
 
   Future<Either<String, bool>> register({
     required String email,
@@ -122,10 +123,9 @@ class UserRepository {
           'password': password,
           'phoneNumber': phoneNumber,
           'name': name,
-          'provinces': provinces ,
-          'interests':interests,
+          'provinces': provinces,
+          'interests': interests,
         },
-     
         headers: NetworkConfig.getHeaders(needAuth: false),
       ).then((response) {
         CommonResponse<Map<String, dynamic>> commonResponse =
