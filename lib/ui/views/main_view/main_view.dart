@@ -15,6 +15,7 @@ import 'package:flutter_templat/ui/views/main_view/add_event/add_event_view.dart
 import 'package:flutter_templat/ui/views/main_view/explore_view/explore_view.dart';
 import 'package:flutter_templat/ui/views/main_view/main_view_widget/bottom_navigation_widget.dart'
     show BottomNavigationWidget;
+import 'package:flutter_templat/ui/views/main_view/profile_view/profile_view.dart';
 
 import 'package:flutter_templat/ui/views/sign_up_view/sign_up_view.dart';
 import 'package:get/get.dart';
@@ -134,7 +135,7 @@ class _MainViewState extends State<MainView> {
         body: PageView(
           physics: NeverScrollableScrollPhysics(),
           controller: controller,
-          children: [ExploreView()],
+          children: [ExploreView(), MyProfilePage()],
         ),
       ),
     );
