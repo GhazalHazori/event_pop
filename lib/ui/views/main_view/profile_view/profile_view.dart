@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_templat/core/utils/general_utile.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_event.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/customeventuser.dart';
 import 'package:flutter_templat/ui/views/followers_view/followers_page.dart';
 import 'package:flutter_templat/ui/views/following_view/following_page.dart';
 import 'package:flutter_templat/ui/views/main_view/profile_view/profile_controller.dart';
 import 'package:flutter_templat/ui/views/notification_view/notification_page.dart';
+import 'package:flutter_templat/ui/views/profile+details/profile_details_view.dart';
 import 'package:get/get.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -21,9 +23,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
   @override
   void initState() {
     super.initState();
-    controller.setUserId("96ebfe57-87ae-452c-b591-f37dbb0091b7");
-    controller.loadProfile("96ebfe57-87ae-452c-b591-f37dbb0091b7");
-    controller.fetcheventforuser(id: "96ebfe57-87ae-452c-b591-f37dbb0091b7");
+    controller.setUserId(storage.getUserId());
+    controller.loadProfile(storage.getUserId());
+    controller.fetcheventforuser(id: storage.getUserId());
   }
 
   @override
@@ -78,130 +80,95 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   color: Colors.black87,
                 ),
               ),
-              GestureDetector(
-                onTap: _editInterests,
-                child: const Text(
-                  'CHANGE',
-                  style: TextStyle(
-                    color: Color(0xFF5A6CEA),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
+              Obx(() => GestureDetector(
+                    onTap: _editInterests,
+                    child: Text(
+                      controller.isEditingInterests.value ? 'DONE' : 'CHANGE',
+                      style: const TextStyle(
+                        color: Color(0xFF5A6CEA),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  )),
             ],
           ),
           const SizedBox(height: 16),
-          _buildInterestTags(),
+          _buildUserInterests(),
         ],
       ),
     );
   }
 
   void _editInterests() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Interests'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: controller.interests.map((interest) {
-            return CheckboxListTile(
-              title: Text(interest),
-              value: controller.selectedInterests.contains(interest),
-              onChanged: (bool? value) {
-                setState(() {
-                  if (value == true) {
-                    controller.selectedInterests.add(interest);
-                  } else {
-                    controller.selectedInterests.remove(interest);
-                  }
-                });
-              },
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Done'),
-          ),
-        ],
-      ),
-    );
+    controller.toggleEditMode();
   }
 
-  Widget _buildInterestTags() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: controller.interests.map((interest) {
-        final isSelected = controller.selectedInterests.contains(interest);
-        Color backgroundColor;
-        Color textColor;
-
-        switch (interest) {
-          case 'Games Online':
-            backgroundColor = isSelected
-                ? const Color(0xFF5A6CEA)
-                : const Color(0xFF5A6CEA).withOpacity(0.1);
-            textColor = isSelected ? Colors.white : const Color(0xFF5A6CEA);
-            break;
-          case 'Concert':
-            backgroundColor = isSelected
-                ? const Color(0xFFFF6B35)
-                : const Color(0xFFFF6B35).withOpacity(0.1);
-            textColor = isSelected ? Colors.white : const Color(0xFFFF6B35);
-            break;
-          case 'Music':
-            backgroundColor = isSelected
-                ? const Color(0xFFFF8C42)
-                : const Color(0xFFFF8C42).withOpacity(0.1);
-            textColor = isSelected ? Colors.white : const Color(0xFFFF8C42);
-            break;
-          case 'Art':
-            backgroundColor = isSelected
-                ? const Color(0xFF9B59B6)
-                : const Color(0xFF9B59B6).withOpacity(0.1);
-            textColor = isSelected ? Colors.white : const Color(0xFF9B59B6);
-            break;
-          case 'Movie':
-            backgroundColor = isSelected
-                ? const Color(0xFF1ABC9C)
-                : const Color(0xFF1ABC9C).withOpacity(0.1);
-            textColor = isSelected ? Colors.white : const Color(0xFF1ABC9C);
-            break;
-          default:
-            backgroundColor = isSelected
-                ? const Color(0xFF3498DB)
-                : const Color(0xFF3498DB).withOpacity(0.1);
-            textColor = isSelected ? Colors.white : const Color(0xFF3498DB);
-        }
-
-        return GestureDetector(
-          onTap: () => controller.toggleInterest(interest),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              interest,
-              style: TextStyle(
-                color: textColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
+  Widget _buildUserInterests() {
+    return Obx(() {
+      // Show loading indicator when interests are being loaded
+      if (controller.isLoadingInterests.value) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: CircularProgressIndicator(),
           ),
         );
-      }).toList(),
-    );
+      }
+
+      // Show user's current interests by default, and all interests in edit mode
+      final interestsToShow = controller.isEditingInterests.value
+          ? controller.allInterestss.map((i) => i.name).toList()
+          : (controller.interestss.isNotEmpty
+              ? controller.interestss.map((i) => i.name).toList()
+              : ["No interests selected"]);
+
+      // Get the list of selected interest names for highlighting
+      final selectedInterestNames = controller.selectedInterests.toSet();
+
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: interestsToShow.map((interest) {
+          final isSelected = selectedInterestNames.contains(interest);
+          final isPlaceholder = interest == "No interests selected";
+
+          return GestureDetector(
+            onTap: controller.isEditingInterests.value && !isPlaceholder
+                ? () => controller.toggleInterest(interest)
+                : null,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isPlaceholder
+                    ? Colors.grey[100]
+                    : (isSelected
+                        ? Color(0xFF5A6CEA).withOpacity(0.1)
+                        : Colors.grey[200]),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? Color(0xFF5A6CEA) : Colors.transparent,
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                interest,
+                style: TextStyle(
+                  color: isPlaceholder
+                      ? Colors.grey[600]
+                      : (isSelected ? Color(0xFF5A6CEA) : Colors.black87),
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontStyle:
+                      isPlaceholder ? FontStyle.italic : FontStyle.normal,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      );
+    });
   }
 
   Widget _buildHeader() {
@@ -213,14 +180,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 24),
           ),
-          const SizedBox(width: 8),
           Row(
             children: [
-              InkWell(
-                  onTap: () {
-                    Get.to(NotificationScreen());
-                  },
-                  child: Icon(Icons.notifications_active)),
               const Text(
                 'Profile',
                 style: TextStyle(
@@ -238,52 +199,73 @@ class _MyProfilePageState extends State<MyProfilePage> {
 
   Widget _buildProfileSection() {
     return Center(
-      child: Stack(
-        children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[400],
-              border: Border.all(color: Colors.grey[300]!, width: 2),
-            ),
-            child: controller.profileImageUrl.value != null
-                ? ClipOval(
-                    child: Image.network(
-                      controller.profileImageUrl.value!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildDefaultAvatar();
-                      },
+        child: Obx(() => Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[400],
+                    border: Border.all(color: Colors.grey[300]!, width: 2),
+                  ),
+                  child: controller.profileImageUrl.value.isNotEmpty
+                      ? ClipOval(
+                          child: Image.network(
+                            controller.profileImageUrl.value,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildDefaultAvatar();
+                            },
+                          ),
+                        )
+                      : _buildDefaultAvatar(),
+                ),
+
+                // ✅ اللودر أثناء التحميل
+                if (controller.isUploading.value)
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withOpacity(0.3),
                     ),
-                  )
-                : _buildDefaultAvatar(),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: _changeProfilePicture,
-              child: Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF5A6CEA),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+
+                // 📸 زر تغيير الصورة
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.pickAndUploadImage();
+                    },
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF5A6CEA),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
+                  ),
                 ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+              ],
+            )));
   }
 
   Widget _buildDefaultAvatar() {
@@ -298,8 +280,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
             onTap: () {
               Get.to(FollowingPage());
             },
-            child: _buildStatItem(
-                controller.followersCount.value ?? '0', 'Following')),
+            child:
+                _buildStatItem(controller.followersCount.value, 'Following')),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 40),
           width: 1,
@@ -348,7 +330,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
       );
 
   Widget _buildTabContent() => Obx(() => Container(
-        height: 400,
+        height: 600,
         child: TabBarView(
           controller: controller.tabController,
           children: [

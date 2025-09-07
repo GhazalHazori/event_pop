@@ -7,6 +7,9 @@ class CustomNotificationItem extends StatelessWidget {
   final String time;
   final String? imageUrl;
   final bool showActions;
+  final bool isRead;
+  final VoidCallback? onAccept;
+  final VoidCallback? onReject;
 
   const CustomNotificationItem({
     super.key,
@@ -15,6 +18,9 @@ class CustomNotificationItem extends StatelessWidget {
     required this.time,
     this.imageUrl,
     this.showActions = false,
+    this.isRead = false,
+    this.onAccept,
+    this.onReject,
   });
 
   @override
@@ -27,9 +33,10 @@ class CustomNotificationItem extends StatelessWidget {
           CircleAvatar(
             radius: 24,
             backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-            backgroundColor: Colors.grey[300],
+            backgroundColor: isRead ? Colors.grey[300] : Colors.blue[100],
             child: imageUrl == null
-                ? const Icon(Icons.person, color: Colors.white)
+                ? Icon(Icons.person,
+                    color: isRead ? Colors.white : Colors.blue[700])
                 : null,
           ),
           const SizedBox(width: 12),
@@ -44,17 +51,18 @@ class CustomNotificationItem extends StatelessWidget {
                       child: RichText(
                         text: TextSpan(
                           text: title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                          style: TextStyle(
+                            fontWeight:
+                                isRead ? FontWeight.normal : FontWeight.bold,
+                            color: isRead ? Colors.black54 : Colors.black,
                             fontSize: 14,
                           ),
                           children: [
                             TextSpan(
                               text: " $subtitle",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.normal,
-                                color: Colors.black87,
+                                color: isRead ? Colors.black54 : Colors.black87,
                               ),
                             ),
                           ],
@@ -64,7 +72,9 @@ class CustomNotificationItem extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       time,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: isRead ? Colors.grey : Colors.blue[600]),
                     ),
                   ],
                 ),
@@ -75,7 +85,7 @@ class CustomNotificationItem extends StatelessWidget {
                       Expanded(
                         child: CustomButton(
                           text: "Reject",
-                          onPressed: () {},
+                          onPressed: onReject ?? () {},
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
                           borderSide: const BorderSide(color: Colors.grey),
@@ -86,7 +96,7 @@ class CustomNotificationItem extends StatelessWidget {
                       Expanded(
                         child: CustomButton(
                           text: "Accept",
-                          onPressed: () {},
+                          onPressed: onAccept ?? () {},
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
                           isElevated: true,

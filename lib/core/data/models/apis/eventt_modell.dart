@@ -1,9 +1,11 @@
 class EventModel {
   final int id;
+  final int availableSeats;
   final String name;
   final String description;
   final String image;
   final DateTime date;
+  final DateTime time;
   final String interest;
   final Location location;
   final int price;
@@ -14,10 +16,12 @@ class EventModel {
 
   EventModel({
     required this.id,
+    required this.availableSeats,
     required this.name,
     required this.description,
     required this.image,
     required this.date,
+    required this.time,
     required this.interest,
     required this.location,
     required this.price,
@@ -29,6 +33,8 @@ class EventModel {
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
+      time: DateTime.parse(
+          '${DateTime.now().toIso8601String().split('T')[0]} ${json['time']}'),
       id: json['id'],
       name: json['name'],
       description: json['description'],
@@ -37,6 +43,7 @@ class EventModel {
       interest: json['interest'],
       location: Location.fromJson(json['location']),
       price: json['price'],
+      availableSeats: json['availableSeats'],
       tickets: json['tickets'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
@@ -47,10 +54,12 @@ class EventModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'availableSeats': availableSeats,
       'name': name,
       'description': description,
       'image': image,
       'date': date.toIso8601String(),
+      'time': time.hour.toString() + ':' + time.minute.toString(),
       'interest': interest,
       'location': location.toJson(),
       'price': price,

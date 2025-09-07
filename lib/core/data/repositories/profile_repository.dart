@@ -59,6 +59,34 @@ class ProfileRepository {
     }
   }
 
+  Future<Either<String, String>> updateInterestForUser(
+      List<int> updatedInterests, String id) async {
+    try {
+      return NetworkUtil.sendRequest(
+        type: RequestType.PUT,
+        url: ProfileEndPoints.updateinterestforuser + id,
+        body: {
+          'updatedInterest': updatedInterests, // send as list
+        },
+        headers: NetworkConfig.getHeaders(needAuth: true),
+      ).then((response) {
+        CommonResponse<Map<String, dynamic>> commonResponse =
+            CommonResponse.fromJson(response);
+
+        if (commonResponse.getStatus) {
+          print(commonResponse.data);
+          return Right(commonResponse.data!['message'] ??
+              'Profile updated successfully!');
+        } else {
+          print(commonResponse.message);
+          return Left(commonResponse.message ?? 'Failed to update profile');
+        }
+      });
+    } catch (e) {
+      return Left('Error: $e');
+    }
+  }
+
   Future<Either<String, List<EventModel>>> geteventforuser(
       {required String id}) async {
     try {

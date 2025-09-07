@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_templat/ui/views/following_view/following_controller.dart';
+import 'package:get/get.dart';
 
 class FollowingPage extends StatefulWidget {
   @override
@@ -6,25 +8,14 @@ class FollowingPage extends StatefulWidget {
 }
 
 class _FollowingPageState extends State<FollowingPage> {
-  final List<Map<String, String>> allFollowing = [
-    {"name": "Nour Alwan", "subtitle": "Artist"},
-    {"name": "David Ali", "subtitle": "Tech Blogger"},
-    {"name": "Hala Sami", "subtitle": "UI Designer"},
-    {"name": "Mohamed Zain", "subtitle": "Traveler"},
-  ];
-
-  String searchText = "";
+  final FollowingController controller = Get.put(FollowingController());
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> filteredFollowing = allFollowing
-        .where(
-          (f) => f["name"]!.toLowerCase().contains(searchText.toLowerCase()),
-        )
-        .toList();
-
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text("Following"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -36,42 +27,88 @@ class _FollowingPageState extends State<FollowingPage> {
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
-              decoration: InputDecoration(
-                hintText: "Search following...",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               onChanged: (value) {
-                setState(() => searchText = value);
+                controller.updateSearchText(value);
               },
+              textAlign: TextAlign.right,
+              textDirection: TextDirection.rtl,
+              decoration: InputDecoration(
+                hintText: "Search",
+                hintStyle: TextStyle(color: Colors.grey[600]),
+                prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+              ),
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemCount: filteredFollowing.length,
-              separatorBuilder: (_, __) => Divider(),
-              itemBuilder: (context, index) {
-                final following = filteredFollowing[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey[300],
-                    child: Icon(Icons.person, color: Colors.grey[700]),
-                  ),
-                  title: Text(following["name"]!),
-                  subtitle: Text(following["subtitle"]!),
-                  trailing: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.black87,
-                    ),
-                    child: Text("Unfollow"),
+            child: Obx(() {
+              if (controller.followings.isEmpty) {
+                return Center(
+                  child: Text(
+                    'لا يوجد متابعين بعد',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 );
-              },
-            ),
+              }
+
+              return ListView.builder(
+                itemCount: controller.followings.length,
+                itemBuilder: (context, index) {
+                  final following = controller.followings[index];
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: following.image != null
+                            ? NetworkImage(following.image!)
+                            : null,
+                        child: following.image == null
+                            ? Icon(Icons.person, color: Colors.grey[700])
+                            : null,
+                      ),
+                      title: Text(
+                        following.name ?? 'مستخدم',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      subtitle: Text(
+                        '${following.followersCount ?? 0} متابع',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () {
+                          // TODO: Implement unfollow functionality
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[50],
+                          foregroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          elevation: 0,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                        child: Text(
+                          'إلغاء المتابعة',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),

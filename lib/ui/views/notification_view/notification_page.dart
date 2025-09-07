@@ -30,11 +30,46 @@ class NotificationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: Obx(() => ListView.builder(
-                      itemCount: controller.notifications.length,
-                      itemBuilder: (context, index) =>
-                          controller.notifications[index],
-                    )),
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (controller.notifications.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.notifications_none,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            'No notifications yet',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: controller.notifications.length,
+                    itemBuilder: (context, index) {
+                      final notification = controller.notifications[index];
+                      print(
+                          '🏗️ Building notification item $index: ${notification.type}');
+                      return controller.buildNotificationItem(notification);
+                    },
+                  );
+                }),
               ),
             ],
           ),

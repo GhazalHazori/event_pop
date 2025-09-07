@@ -7,9 +7,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'add_event_controller.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddEventScreen extends StatelessWidget {
   final AddEventController controller = Get.put(AddEventController());
+  final TextEditingController descriptionController = TextEditingController();
 
   // Future<void> _pickImage() async {
   //   final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -17,6 +19,25 @@ class AddEventScreen extends StatelessWidget {
   //     controller.setImage(File(picked.path));
   //   }
   // }
+  Future<void> _selectTime(BuildContext context) async {
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(
+          controller.selectedDate.value ?? DateTime.now()),
+    );
+
+    if (pickedTime != null) {
+      final selectedDateTime = DateTime(
+        controller.selectedDate.value?.year ?? DateTime.now().year,
+        controller.selectedDate.value?.month ?? DateTime.now().month,
+        controller.selectedDate.value?.day ?? DateTime.now().day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+      controller
+          .setTime(selectedDateTime); // تحديث التاريخ والوقت في الـ controller
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final picked = await showDatePicker(
@@ -36,7 +57,7 @@ class AddEventScreen extends StatelessWidget {
       MaterialPageRoute(builder: (_) => MapPickerScreen()),
     );
     if (location != null) {
-      controller.setLocation(location);
+      await controller.setLocation(location);
     }
   }
 
@@ -77,12 +98,29 @@ class AddEventScreen extends StatelessWidget {
                             border: OutlineInputBorder(),
                           ),
                         ),
+                        SizedBox(height: 20),
+                        Text("Description:", style: TextStyle(fontSize: 19)),
+                        SizedBox(height: 8),
+                        TextField(
+                          controller: descriptionController,
+                          maxLines: 3,
+                          decoration: InputDecoration(
+                            hintText: 'Describe your event',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 16),
                   GestureDetector(
-                    // onTap: _pickImage,
+                    onTap: () async {
+                      final picked = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
+                      if (picked != null) {
+                        controller.setImage(File(picked.path));
+                      }
+                    },
                     child: Obx(() => Container(
                           width: 120,
                           height: 120,
@@ -98,7 +136,13 @@ class AddEventScreen extends StatelessWidget {
                                     fit: BoxFit.cover,
                                   ),
                                 )
-                              : Icon(Icons.image, size: 60, color: themeColor),
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    'assets/images/event_details.png',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                         )),
                   ),
                 ],
@@ -160,16 +204,41 @@ class AddEventScreen extends StatelessWidget {
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   )),
               const SizedBox(height: 20),
+              Obx(() => ListTile(
+                    onTap: () =>
+                        _selectTime(context), // استدعاء دالة اختيار الوقت
+                    leading: Icon(Icons.access_time,
+                        color: themeColor), // رمز الساعة
+                    title: Text(
+                      controller.selectedDate.value != null
+                          ? DateFormat.Hm().format(controller.selectedDate
+                              .value!) // تنسيق الوقت (الساعة والدقيقة)
+                          : 'Choose time', // النص الافتراضي إذا لم يتم اختيار الوقت
+                    ),
+                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                  )),
 
               /// Location
               Obx(() => ListTile(
                     onTap: () => _pickLocation(context),
                     leading: Icon(Icons.location_on, color: themeColor),
-                    title: Text(
-                      controller.selectedLocation.value != null
-                          ? 'Lat: ${controller.selectedLocation.value!.latitude}, Lng: ${controller.selectedLocation.value!.longitude}'
-                          : 'Pick location on map',
-                    ),
+                    title: Text('Pick location on map'),
+                    subtitle: controller.selectedLocation.value != null
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (controller.selectedAddress.value != null)
+                                Text(
+                                  controller.selectedAddress.value!,
+                                  style: TextStyle(color: Colors.grey[800]),
+                                ),
+                              Text(
+                                'Lat: ${controller.selectedLocation.value!.latitude}, Lng: ${controller.selectedLocation.value!.longitude}',
+                                style: TextStyle(color: Colors.grey[700]),
+                              ),
+                            ],
+                          )
+                        : null,
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   )),
               const SizedBox(height: 20),
@@ -243,12 +312,15 @@ class AddEventScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   controller.submitEvent(
+                    selectedTime: controller.selectedTime.value!,
+                    description: descriptionController.text,
                     name: controller.nameController.text,
                     selectedDate: controller.selectedDate.value!,
                     selectedType: controller.selectedType.value!,
                     selectedLocation: controller.selectedLocation.value!,
                     price: controller.priceController.text,
                     tickets: controller.ticketController.text,
+                    defaultImageAsset: 'assets/images/event_details.png',
                   );
                 },
                 child: Text(

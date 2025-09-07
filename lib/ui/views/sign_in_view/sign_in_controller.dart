@@ -8,18 +8,17 @@ import 'package:flutter_templat/ui/views/main_view/main_view.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-class SignInController  extends BaseControoler{
-  TextEditingController emailController=TextEditingController();
-  TextEditingController password =TextEditingController();
-  
-  void login({required String email,required String password}) {
+class SignInController extends BaseControoler {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController password = TextEditingController();
+
+  void login(
+      {required String email,
+      required String password,
+      required String fcmToken}) {
     runFullLoadingFunction(
       function: UserRepository()
-          .login(
-          
-            email: email,
-            password: password,
-          )
+          .login(email: email, password: password, fcmToken: fcmToken)
           .then(
             (value) => value.fold(
               (l) {
@@ -34,6 +33,8 @@ class SignInController  extends BaseControoler{
                   message: "Succed",
                 );
                 storage.setTokenInfo(r);
+
+                print(storage.setTokenInfo(r));
                 Get.to(MainView());
               },
             ),

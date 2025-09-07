@@ -52,6 +52,7 @@ class NotificationService {
 
   Future<void> registerdFCMToken() async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
+    storage.setFcmToken(fcmToken ?? "");
     //! -- Call api that register fcm token ---
     print(fcmToken);
 
@@ -69,8 +70,21 @@ class NotificationService {
   void handelNotification(
       {required NotifictionModel model, required AppState appState}) {
     notifcationStream.add(model);
-    if (model.notifctionType == NotificationType.SUBSCRIPTION.name) {
-      storage.setSubStatus(model.subStatus == "1" ? true : false);
+    if (model.type == "subscription") {
+      // Handle subscription notifications
+      print('Subscription notification: ${model.message}');
+    } else if (model.type == "follow-accepted") {
+      // Handle follow accepted notifications
+      print('Follow accepted: ${model.message}');
+    } else if (model.type == "follow-rejected") {
+      // Handle follow rejected notifications
+      print('Follow rejected: ${model.message}');
+    } else if (model.type == "invite") {
+      // Handle event invitation notifications
+      print('Event invitation: ${model.message}');
+    } else {
+      // Handle other notification types
+      print('Other notification: ${model.message}');
     }
   }
 }

@@ -14,8 +14,7 @@ class NetworkConfig {
       Map<String, String>? extraHeaders}) {
     return {
       if (needAuth)
-        "Authorization":
-            "Barrier eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk2ZWJmZTU3LTg3YWUtNDUyYy1iNTkxLWYzN2RiYjAwOTFiNyIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3NTA0NTgyODR9.zotJPmASOgIXCh1BJQyVm2wkOk0zi0J4klvljDK9Ab8",
+        "Authorization": "b ${storage.getTokenInfo()!.accessToken ?? ''}",
       if (type != RequestType.GET)
         "Content-Type": type == RequestType.MULTIPART
             ? "multipart/form-data"

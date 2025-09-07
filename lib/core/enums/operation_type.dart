@@ -1,5 +1,1 @@
-enum OperationType {
-  MEAL,
-  CATEGORY,
-  NONE,
-}
+enum OperationType { MEAL, CATEGORY, NONE, UPCOMING }

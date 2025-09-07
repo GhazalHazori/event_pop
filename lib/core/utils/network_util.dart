@@ -173,7 +173,6 @@ class NetworkUtil {
 
   static Future<dynamic> sendMultipartRequest({
     required String url,
-    required RequestType type,
     Map<String, String>? headers = const {},
     Map<String, String>? fields = const {},
     Map<String, String>? files = const {},

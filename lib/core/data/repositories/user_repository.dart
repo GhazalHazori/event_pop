@@ -45,29 +45,27 @@ import 'package:flutter_templat/core/data/models/common_response.dart';
 import 'package:flutter_templat/core/data/network/endpoints/user_endpoints.dart';
 import 'package:flutter_templat/core/data/network/network_config.dart';
 import 'package:flutter_templat/core/enums/request_type.dart';
+import 'package:flutter_templat/core/utils/general_utile.dart';
 import 'package:flutter_templat/core/utils/network_util.dart';
 
 class UserRepository {
-  Future<Either<String, TokenInfo>> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<Either<String, TokenInfo>> login(
+      {required String email,
+      required String password,
+      required String fcmToken}) async {
     try {
       return NetworkUtil.sendRequest(
         type: RequestType.POST,
         url: UserEndPoints.login,
-        body: {
-          'email': email,
-          'password': password,
-          'fcmToken':
-              "eBmof8GKQGKupwi1SFzUCx:APA91bEU9spNVMO2W93Vo5ps8RZADuyJf5VJu-y2sZyeEEA5i5YX-8lHe6fzMMzgWIuC54kj6lAo6PE3AYslTFcTBsLlGnVsW6c7qB5kAbIePMJ2a1LQBEA"
-        },
+        body: {'email': email, 'password': password, 'fcmToken': fcmToken},
         headers: NetworkConfig.getHeaders(needAuth: false),
       ).then((response) {
         CommonResponse<Map<String, dynamic>> commonResponse =
             CommonResponse.fromJson(response);
 
         if (commonResponse.getStatus) {
+          storage.setUserId(commonResponse.getData['userId']);
+
           return Right(TokenInfo.fromJson(commonResponse.data ?? {}));
         } else {
           return Left(commonResponse.message ?? '');

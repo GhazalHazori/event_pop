@@ -4,12 +4,12 @@ class TokenInfo {
   TokenInfo({this.accessToken});
 
   TokenInfo.fromJson(Map<String, dynamic> json) {
-    accessToken = json['accessToken'];
+    accessToken = json['token'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['accessToken'] = this.accessToken;
+    data['token'] = this.accessToken;
     return data;
   }
 }

@@ -22,25 +22,33 @@ class CustomEventCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child:
-                  // (imagePath != null && imagePath!.isNotEmpty)
-                  //     ? Image.asset(
-                  //         imagePath!,
-                  //         width: 80,
-                  //         height: 80,
-                  //         fit: BoxFit.cover,
-                  //       )
-                  // :
-                  Container(
-                width: 80,
-                height: 80,
-                color: Colors.grey[300],
-                child: Icon(
-                  Icons.event,
-                  size: 40,
-                  color: Colors.grey[600],
-                ),
-              ),
+              child: (imagePath ?? '').isNotEmpty
+                  ? Image.network(
+                      imagePath!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 80,
+                        height: 80,
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.event,
+                          size: 40,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 80,
+                      height: 80,
+                      color: Colors.grey[300],
+                      child: Icon(
+                        Icons.event,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(
