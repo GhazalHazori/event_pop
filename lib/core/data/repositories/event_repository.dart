@@ -7,6 +7,7 @@ import 'package:flutter_templat/core/data/models/event_details_model.dart';
 import 'package:flutter_templat/core/data/models/event_map_model.dart';
 import 'package:flutter_templat/core/data/models/nearly_event_model.dart';
 import 'package:flutter_templat/core/data/models/past_event_model.dart';
+import 'package:flutter_templat/core/data/models/saved_event_model.dart';
 import 'package:flutter_templat/core/data/models/up_coming_event.dart';
 import 'package:flutter_templat/core/data/network/endpoints/add_event_endpoint.dart';
 import 'package:flutter_templat/core/data/network/endpoints/event_endpoints.dart';
@@ -16,6 +17,62 @@ import 'package:flutter_templat/core/utils/network_util.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class EventRepository {
+  Future<Either<String, String>> saveEvent({
+    required int id,
+  }) async {
+    try {
+      return NetworkUtil.sendRequest(
+        type: RequestType.POST,
+        url: EventEndpoints.saveEvent + '${id}',
+        headers: NetworkConfig.getHeaders(needAuth: true),
+      ).then((response) {
+        CommonResponse<Map<String, dynamic>> commonResponse =
+            CommonResponse.fromJson(response);
+
+        if (commonResponse.getStatus) {
+          return Right(commonResponse.message ?? '');
+        } else {
+          return Left(commonResponse.message ?? '');
+        }
+      });
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  Future<Either<String, List<SavedEventModel>>> getSavedEvent(
+      {required String id}) async {
+    try {
+      final response = await NetworkUtil.sendRequest(
+        type: RequestType.GET,
+        url: EventEndpoints.getSavedEvent + '${id}',
+        headers: NetworkConfig.getHeaders(
+          needAuth: true,
+          type: RequestType.GET,
+        ),
+      );
+
+      CommonResponse<dynamic> commonResponse =
+          CommonResponse.fromJson(response);
+
+      if (commonResponse.getStatus) {
+        List<SavedEventModel> result = [];
+
+        commonResponse.getData["events"]!.forEach(
+          (element) {
+            result.add(SavedEventModel.fromJson(element));
+          },
+        );
+
+        return Right(result);
+      } else {
+        return Left(commonResponse.message ?? '');
+      }
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
   Future<Either<String, Eventdetailsmodel>> geteventById(
       {required String id}) async {
     try {

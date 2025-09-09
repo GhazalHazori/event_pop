@@ -4,4 +4,10 @@ class UserEndPoints {
   static String register = NetworkConfig.getFullApiRoute('auth/register');
   static String verify = NetworkConfig.getFullApiRoute('auth/verify');
   static String login = NetworkConfig.getFullApiRoute('auth/login');
+  static String sendOtptoEmail =
+      NetworkConfig.getFullApiRoute('reset-password/request-reset');
+  static String verifyOtpReset =
+      NetworkConfig.getFullApiRoute('reset-password/verify-reset-otp');
+  static String resetPassword =
+      NetworkConfig.getFullApiRoute('reset-password/reset-password');
 }

@@ -76,6 +76,59 @@ class UserRepository {
     }
   }
 
+  Future<Either<String, String>> verifyOtpReset({
+    required String email,
+    required String otpNum,
+  }) async {
+    try {
+      return NetworkUtil.sendRequest(
+        type: RequestType.POST,
+        url: UserEndPoints.verifyOtpReset,
+        body: {
+          'email': email,
+          'otp': otpNum,
+        },
+        headers: NetworkConfig.getHeaders(needAuth: false),
+      ).then((response) {
+        CommonResponse<Map<String, dynamic>> commonResponse =
+            CommonResponse.fromJson(response);
+
+        if (commonResponse.getStatus) {
+          return Right(commonResponse.getData['proof'].toString());
+        } else {
+          return Left(commonResponse.message ?? '');
+        }
+      });
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  Future<Either<String, String>> resetPassword(
+      {required String email,
+      required String id,
+      required String newpassword}) async {
+    try {
+      return NetworkUtil.sendRequest(
+        type: RequestType.POST,
+        url: UserEndPoints.verify,
+        body: {'email': email, 'proof': id, 'newPassword': newpassword},
+        headers: NetworkConfig.getHeaders(needAuth: false),
+      ).then((response) {
+        CommonResponse<Map<String, dynamic>> commonResponse =
+            CommonResponse.fromJson(response);
+
+        if (commonResponse.getStatus) {
+          return Right(commonResponse.data!['message']);
+        } else {
+          return Left(commonResponse.message ?? '');
+        }
+      });
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
   Future<Either<String, String>> verify({
     required String email,
     required String otpNum,
@@ -87,6 +140,32 @@ class UserRepository {
         body: {
           'email': email,
           'otpNum': otpNum,
+        },
+        headers: NetworkConfig.getHeaders(needAuth: false),
+      ).then((response) {
+        CommonResponse<Map<String, dynamic>> commonResponse =
+            CommonResponse.fromJson(response);
+
+        if (commonResponse.getStatus) {
+          return Right(commonResponse.data!['message']);
+        } else {
+          return Left(commonResponse.message ?? '');
+        }
+      });
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  Future<Either<String, String>> sendOtpToEmail({
+    required String email,
+  }) async {
+    try {
+      return NetworkUtil.sendRequest(
+        type: RequestType.POST,
+        url: UserEndPoints.sendOtptoEmail,
+        body: {
+          'email': email,
         },
         headers: NetworkConfig.getHeaders(needAuth: false),
       ).then((response) {

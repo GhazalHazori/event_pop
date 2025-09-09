@@ -1,6 +1,6 @@
 class Eventdetailsmodel {
-  int ?id;
-  String ?time;
+  int? id;
+  String? time;
   int? availableSeats;
   String? name;
   String? description;
@@ -8,7 +8,7 @@ class Eventdetailsmodel {
   String? imagePublicId;
   String? date;
   String? interest;
-  Location ?location;
+  Location? location;
   int? price;
   int? tickets;
   String? createdAt;
@@ -83,8 +83,8 @@ class Eventdetailsmodel {
 
 class Location {
   Crs? crs;
-  String ?type;
-  List<double> ?coordinates;
+  String? type;
+  List<double>? coordinates;
 
   Location({this.crs, this.type, this.coordinates});
 
@@ -107,7 +107,7 @@ class Location {
 
 class Crs {
   String? type;
-  Properties ?properties;
+  Properties? properties;
 
   Crs({this.type, this.properties});
 

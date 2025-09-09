@@ -8,7 +8,10 @@ class TextForm extends StatefulWidget {
     this.hintfontsize,
     required this.textfieldhintcolor,
     required this.texteditingcontroller,
-    this.validator, this.prefixIcon, this.suffixIcon,
+    this.validator,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.type,
   });
   final String hinttext;
   final TextEditingController texteditingcontroller;
@@ -16,7 +19,8 @@ class TextForm extends StatefulWidget {
   final Color? textfieldhintcolor;
   final String? Function(String?)? validator;
   final Icon? prefixIcon;
- final Icon? suffixIcon;
+  final Icon? suffixIcon;
+  final TextInputType? type;
   @override
   State<TextForm> createState() => _TextFormState();
 }
@@ -28,25 +32,24 @@ class _TextFormState extends State<TextForm> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
       child: TextFormField(
-        
+        keyboardType: widget.type,
         validator: widget.validator,
         controller: widget.texteditingcontroller,
         decoration: InputDecoration(
-          
           errorStyle: TextStyle(color: AppColors.bluecolor),
           fillColor: AppColors.whitecolor,
           filled: true,
-          prefixIcon:widget.prefixIcon ,
+          prefixIcon: widget.prefixIcon,
           suffixIcon: widget.suffixIcon,
-
           hintText: widget.hinttext,
           hintStyle: TextStyle(
               color: AppColors.greycolor.withOpacity(0.5),
+              fontFamily: 'Tajawal',
               fontSize: widget.hintfontsize ?? size.width * 0.04),
           border: OutlineInputBorder(
-            
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              borderSide: BorderSide(color: AppColors.greySign.withOpacity(0.5))),
+              borderSide:
+                  BorderSide(color: AppColors.greySign.withOpacity(0.5))),
         ),
       ),
     );

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_templat/core/translation/app_traslation.dart';
 import 'package:flutter_templat/main.dart';
 import 'package:flutter_templat/ui/shared/colors.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_button_new.dart';
+import 'package:flutter_templat/ui/shared/custom_widgets/custom_doted.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_drawer.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_event.dart';
 import 'package:flutter_templat/ui/shared/custom_widgets/custom_interest.dart';
@@ -16,7 +18,6 @@ import 'package:flutter_templat/ui/shared/utlis.dart'
 import 'package:flutter_templat/ui/views/all_event_view/all_event_view.dart';
 import 'package:flutter_templat/ui/views/event_details_view/event_details_view.dart';
 import 'package:flutter_templat/ui/views/main_view/explore_view/explore_view_controller.dart';
-import 'package:flutter_templat/ui/views/notification_view/notification_page.dart';
 import 'package:flutter_templat/ui/views/search_view/search_view.dart';
 import 'package:flutter_templat/ui/views/sign_up_secondry/sign_up_secondary_view_controller.dart'
     show SignUpSecondaryViewController;
@@ -25,6 +26,7 @@ import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/utils.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ExploreView extends StatefulWidget {
   const ExploreView({super.key});
@@ -167,17 +169,12 @@ class _ExploreViewState extends State<ExploreView>
 
                           //             )
                           // screenWidth(5).pw,
-                          InkWell(
-                            onTap: () {
-                              Get.to(NotificationScreen());
-                            },
-                            child: CircleAvatar(
-                              radius: screenWidth(25),
-                              child: SvgPicture.asset(
-                                  "assets/images/notification.svg"),
-                              backgroundColor:
-                                  AppColors.whitecolor.withOpacity(0.5),
-                            ),
+                          CircleAvatar(
+                            radius: screenWidth(25),
+                            child: SvgPicture.asset(
+                                "assets/images/notification.svg"),
+                            backgroundColor:
+                                AppColors.whitecolor.withOpacity(0.5),
                           )
                         ],
                       ),
@@ -304,11 +301,12 @@ class _ExploreViewState extends State<ExploreView>
                       Text(
                         'Upcoming Events',
                         style: TextStyle(
-                            color: AppColors.blacktext,
-                            fontSize: screenWidth(20),
-                            fontWeight: FontWeight.w400),
+                          color: AppColors.blacktext,
+                          fontSize: screenWidth(20),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                      screenWidth(3).pw,
+                      screenWidth(2.3).pw,
                       InkWell(
                         onTap: () {
                           Get.to(AllEventView());
@@ -334,13 +332,8 @@ class _ExploreViewState extends State<ExploreView>
                   Obx(() {
                     if (controller.eventUpcominList.isEmpty) {
                       return Center(
-                        child: Text(
-                          'No upcoming events',
-                          style: TextStyle(
-                            color: AppColors.greySign,
-                            fontSize: screenWidth(20),
-                          ),
-                        ),
+                        child: MultiDotLoader(
+                            size: 40, color: AppColors.bluecolor),
                       );
                     }
 
@@ -368,6 +361,7 @@ class _ExploreViewState extends State<ExploreView>
                                     EventDetailsView(id: item.id.toString()));
                               },
                               child: CustomEvent(
+                                id: item.id,
                                 imagename: item.image ?? '',
                                 location:
                                     item.location?.crs?.properties?.name ??
@@ -438,6 +432,12 @@ class _ExploreViewState extends State<ExploreView>
                   ),
                   screenHeight(50).ph,
                   Obx(() {
+                    if (controller.nearlyevent.isEmpty) {
+                      return Center(
+                        child: MultiDotLoader(
+                            size: 40, color: AppColors.bluecolor),
+                      );
+                    }
                     return SizedBox(
                       height: screenHeight(2.9),
                       child: ListView.builder(
@@ -445,7 +445,7 @@ class _ExploreViewState extends State<ExploreView>
                         scrollDirection: Axis.horizontal,
                         itemCount: controller.nearlyevent.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final item = controller.intrestList[index];
+                          final item = controller.nearlyevent[index];
                           return Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: screenWidth(50)),
@@ -478,273 +478,387 @@ class _ExploreViewState extends State<ExploreView>
 
   void showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        backgroundColor: AppColors.whitecolor,
-        context: context,
-        isScrollControlled: true,
-        builder: (context) {
-          return Container(
-              padding: EdgeInsets.all(20),
-              height: MediaQuery.of(context).size.height * 0.9,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: AppColors.whitecolor,
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          height: MediaQuery.of(context).size.height * 0.9,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Filter',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
+                  Text(
+                    'Filter',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
 
-                  // Categories Section
+              // Categories Section
+              SizedBox(
+                height: screenHeight(5),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: controller.intrestListFilter.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = controller.intrestListFilter[index];
+                    return Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth(50)),
+                      child: InkWell(
+                        onTap: () {
+                          controller.toggleInterestFilter(item.name!);
+                        },
+                        child: CustomInterest(
+                          svgname: item.logo!,
+                          interestname: item.name!,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
 
-                  SizedBox(
-                    height: screenHeight(5),
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: controller.intrestListFilter.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final item = controller.intrestListFilter[index];
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth(50),
+              // Time & Date Section
+              Text('Time & Date',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w400, fontSize: screenWidth(20))),
+              SizedBox(height: 10),
+
+              Wrap(
+                spacing: 15,
+                children: ['Today', 'Tomorrow', 'This week'].map((time) {
+                  return Obx(() => FilterChip(
+                        label: Text(
+                          time,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: controller.selectedTime.value == time
+                                  ? Colors.white
+                                  : null,
+                              fontSize: screenWidth(20),
+                              fontWeight: FontWeight.w400),
+                        ),
+                        selected: controller.selectedTime.value == time,
+                        selectedColor: Colors.blue,
+                        backgroundColor: Colors.white,
+                        showCheckmark: false,
+                        onSelected: (bool selected) {
+                          if (selected) {
+                            controller.selectTime(time);
+                          } else {
+                            controller.selectTime('');
+                          }
+                        },
+                      ));
+                }).toList(),
+              ),
+              SizedBox(height: 10),
+
+              // Choose from calendar
+              Container(
+                width: screenWidth(1.5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border:
+                      Border.all(color: AppColors.greySign.withOpacity(0.5)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SvgPicture.asset("assets/images/events.svg",
+                        color: AppColors.bluecolor),
+                    TextButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: AppColors.whitecolor,
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
                           ),
-                          child: InkWell(
-                            onTap: () {
-                              controller.toggleInterestFilter(item.name!);
-                            },
-                            child: CustomInterest(
-                              svgname: item.logo!,
-                              interestname: item.name!,
-                            ),
-                          ),
+                          builder: (context) {
+                            return Container(
+                              padding: EdgeInsets.all(16),
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Select Date",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold)),
+                                      IconButton(
+                                        icon: Icon(Icons.close),
+                                        onPressed: () => Navigator.pop(context),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(height: 16),
+                                  Expanded(
+                                    child: Obx(() => TableCalendar(
+                                          headerStyle: HeaderStyle(
+                                              titleTextStyle: TextStyle(
+                                            color:
+                                                Color.fromRGBO(23, 23, 100, 1),
+                                            fontSize: 16,
+                                          )),
+                                          daysOfWeekStyle: DaysOfWeekStyle(
+                                              weekdayStyle: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    23, 23, 100, 1),
+                                                fontSize: 16,
+                                              ),
+                                              weekendStyle: TextStyle(
+                                                color: Color.fromRGBO(
+                                                    23, 23, 100, 1),
+                                                fontSize: 16,
+                                              )),
+                                          firstDay: DateTime.utc(2020, 1, 1),
+                                          lastDay: DateTime.utc(2030, 12, 31),
+                                          focusedDay:
+                                              controller.selectedDate.value,
+                                          selectedDayPredicate: (day) {
+                                            return isSameDay(
+                                                controller.selectedDate.value,
+                                                day);
+                                          },
+                                          onDaySelected:
+                                              (selectedDay, focusedDay) {
+                                            controller.selectedDate.value =
+                                                selectedDay;
+                                            Navigator.pop(context);
+                                          },
+                                          calendarStyle: CalendarStyle(
+                                            todayTextStyle: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  23, 23, 100, 1),
+                                            ),
+                                            todayDecoration: BoxDecoration(
+                                              color: AppColors.orangColor
+                                                  .withOpacity(0.3),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            outsideDaysVisible: false,
+                                            outsideDecoration: BoxDecoration(
+                                              color:
+                                                  Colors.grey[200], // الخلفية
+                                              shape: BoxShape.circle,
+                                            ),
+                                            defaultDecoration: BoxDecoration(
+                                              color:
+                                                  Colors.grey[200], // الخلفية
+                                              shape: BoxShape
+                                                  .circle, // مربعات بدل دوائر
+                                              // borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            defaultTextStyle: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  23, 23, 100, 1),
+                                              fontSize: 16,
+                                            ),
+                                            outsideTextStyle: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  23, 23, 100, 1),
+                                              fontSize: 16,
+                                            ),
+                                            rangeEndDecoration: BoxDecoration(
+                                              color:
+                                                  Colors.grey[200], // الخلفية
+                                              shape: BoxShape
+                                                  .circle, // مربعات بدل دوائر
+                                              // borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            rangeEndTextStyle: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  23, 23, 100, 1),
+                                              fontSize: 16,
+                                            ),
+                                            selectedDecoration: BoxDecoration(
+                                              color: AppColors.orangColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        )),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         );
                       },
+                      child: Text(
+                        'Choose from calendar',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: screenWidth(20),
+                            color: AppColors.greySign),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                     ),
-                  ),
+                    Icon(Icons.arrow_forward_ios, color: Colors.blue)
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
 
-                  // Time & Date Section
-                  Text('Time & Date',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: screenWidth(20))),
-                  SizedBox(height: 10),
-
-                  Wrap(
-                    spacing: 15,
-                    children: ['Today', 'Tomorrow', 'This week'].map((time) {
-                      return Obx(() => FilterChip(
-                            label: Text(
-                              time,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: controller.selectedTime.value == time
-                                      ? Colors.white
-                                      : null,
-                                  fontSize: screenWidth(20),
-                                  fontWeight: FontWeight.w400),
-                            ),
-                            selected: controller.selectedTime.value == time,
-                            selectedColor: Colors.blue,
-                            backgroundColor: Colors.white,
-                            showCheckmark: false,
-                            onSelected: (bool selected) {
-                              if (selected) {
-                                controller.selectTime(time);
-                              } else {
-                                controller.selectTime('');
-                              }
-                            },
-                          ));
-                    }).toList(),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    width: screenWidth(1.5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.greySign.withOpacity(0.5))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SvgPicture.asset(
-                          "assets/images/events.svg",
-                          color: AppColors.bluecolor,
-                        ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text('Choose from calendar',
+              // Location Section
+              Text('Location',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: screenWidth(20),
+                      color: AppColors.blacktext)),
+              SizedBox(height: 10),
+              Container(
+                height: screenHeight(13),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border:
+                      Border.all(color: AppColors.greySign.withOpacity(0.5)),
+                ),
+                child: Row(
+                  children: [
+                    screenWidth(30).pw,
+                    SvgPicture.asset("assets/images/location_icon.svg"),
+                    SizedBox(
+                      width: screenWidth(1.4),
+                      height: screenHeight(20),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          icon:
+                              Icon(Icons.arrow_forward_ios, color: Colors.blue),
+                          isExpanded: true,
+                          hint: Text("  New Yourk, USA",
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: screenWidth(20),
-                                  color: AppColors.greySign)),
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
+                                  color: AppColors.blacktext)),
+                          value: null,
+                          items: controller.locations.map((location) {
+                            return DropdownMenuItem<String>(
+                              value: location,
+                              child: Obx(() {
+                                return Row(
+                                  children: [
+                                    Checkbox(
+                                      value: controller.selectedLocations
+                                          .contains(location),
+                                      onChanged: (bool? value) {
+                                        controller.toggleSelection(location);
+                                      },
+                                    ),
+                                    Text(location,
+                                        style: TextStyle(fontSize: 18)),
+                                  ],
+                                );
+                              }),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {},
                         ),
-                        Icon(Icons.arrow_forward_ios, color: Colors.blue)
-                      ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
 
-                  // Location Section
-                  Text('Location',
+              // Price Range Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Select price range',
                       style: TextStyle(
                           fontWeight: FontWeight.w400,
-                          fontSize: screenWidth(20),
-                          color: AppColors.blacktext)),
-                  SizedBox(height: 10),
-                  Container(
-                    height: screenHeight(13),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.greySign.withOpacity(0.5))),
-                    child: Row(
-                      children: [
-                        screenWidth(30).pw,
-                        SvgPicture.asset("assets/images/location_icon.svg"),
-                        SizedBox(
-                          width: screenWidth(1.4),
-                          height: screenHeight(20), // ضبط الارتفاع حسب الحاجة
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              icon: Icon(Icons.arrow_forward_ios,
-                                  color: Colors
-                                      .blue), // استخدم AppColors.bluecolor
-                              isExpanded: true,
-                              hint: Text(
-                                "  New Yourk, USA",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: screenWidth(20),
-                                    color: AppColors.blacktext),
-                              ),
-                              value: null, // لا حاجة لقيمة هنا للاختيار المتعدد
-                              items: controller.locations.map((location) {
-                                return DropdownMenuItem<String>(
-                                  value: location,
-                                  child: Obx(() {
-                                    return Row(
-                                      children: [
-                                        Checkbox(
-                                          value: controller.selectedLocations
-                                              .contains(location),
-                                          onChanged: (bool? value) {
-                                            controller
-                                                .toggleSelection(location);
-                                          },
-                                        ),
-                                        Text(
-                                          location,
-                                          style: TextStyle(
-                                              fontSize:
-                                                  18), // ضبط حجم الخط حسب الحاجة
-                                        ),
-                                      ],
-                                    );
-                                  }),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                // لا حاجة لتنفيذ إجراء هنا للاختيار المتعدد
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-
-                  // Price Range Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Select price range',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: screenWidth(20))),
-                      Text('\$20-\$120',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: screenWidth(20),
-                              color: AppColors.bluecolor)),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Obx(() => RangeSlider(
-                        values: RangeValues(
-                          controller.minPrice.value,
-                          controller.maxPrice.value,
-                        ),
-                        min: 0,
-                        max: 200,
-                        divisions: 10,
-                        activeColor: Colors.blue,
-                        inactiveColor: Colors.grey[300],
-                        labels: RangeLabels(
-                          '\$${controller.minPrice.value.toInt()}',
-                          '\$${controller.maxPrice.value.toInt()}',
-                        ),
-                        onChanged: (RangeValues values) {
-                          controller.setPriceRange(values.start, values.end);
-                        },
-                      )),
-
-                  SizedBox(height: 20),
-
-                  // Buttons Section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text(
-                            'RESET',
-                            style: TextStyle(color: AppColors.blacktext),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.whitecolor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            fixedSize: Size(screenWidth(40), screenHeight(15)),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text(
-                            'APPLY',
-                            style: TextStyle(color: AppColors.whitecolor),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.bluecolor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                          ),
-                        ),
-                      ),
-                    ],
+                          fontSize: screenWidth(20))),
+                  Text(
+                    '\$20-\$120',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: screenWidth(20),
+                        color: AppColors.bluecolor),
                   ),
                 ],
-              ));
-        });
+              ),
+              SizedBox(height: 10),
+              Obx(() => RangeSlider(
+                    values: RangeValues(
+                        controller.minPrice.value, controller.maxPrice.value),
+                    min: 0,
+                    max: 200,
+                    divisions: 10,
+                    activeColor: Colors.blue,
+                    inactiveColor: Colors.grey[300],
+                    labels: RangeLabels(
+                      '\$${controller.minPrice.value.toInt()}',
+                      '\$${controller.maxPrice.value.toInt()}',
+                    ),
+                    onChanged: (RangeValues values) {
+                      controller.setPriceRange(values.start, values.end);
+                    },
+                  )),
+
+              SizedBox(height: 20),
+
+              // Buttons Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'RESET',
+                        style: TextStyle(color: AppColors.blacktext),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.whitecolor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        fixedSize: Size(screenWidth(40), screenHeight(15)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'APPLY',
+                        style: TextStyle(color: AppColors.whitecolor),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.bluecolor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
